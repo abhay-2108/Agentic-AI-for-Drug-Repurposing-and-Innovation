@@ -1,0 +1,105 @@
+---
+scientific_literature_analysis:
+  description: "**MANDATORY**: Use ArxivPaperTool and ScrapeWebsiteTool to conduct
+    actual searches for {compound_name}. Perform targeted searches:\n\n**Required
+    Search Approach:**\n1. Use ArxivPaperTool to search: \"{compound_name} mechanism
+    pharmacology\"\n2. Use ArxivPaperTool to search: \"{compound_name} therapeutic
+    applications\" \n3. Use ScrapeWebsiteTool on PubMed: \"https://pubmed.ncbi.nlm.nih.gov/\"
+    with search for {compound_name}\n4. Search Google Scholar via web scraping: \"https://scholar.google.com/scholar?q={compound_name}+drug+repurposing\"\n\n**Data
+    Validation Requirements:**\n- Extract real DOIs, PMIDs, and publication details
+    from actual search results\n- Include direct URLs to papers when available\n-
+    Note any searches that return limited results\n- Focus on recent publications
+    (last 5-10 years)\n\n**Never fabricate citations** - only report what you actually
+    find through tool searches."
+  expected_output: "A detailed scientific literature report in markdown format covering:\n-
+    Compound overview and approved indications\n- Comprehensive mechanism of action
+    analysis\n- Safety and pharmacokinetic profile summary  \n- List of potential
+    new indications based on mechanism and literature\n- Key supporting studies and
+    evidence quality assessment\n- Research gaps and opportunities identified"
+  agent: scientific_literature_research_specialist
+  async_execution: true
+molecular_database_research:
+  description: "Search molecular databases for comprehensive {compound_name} data:\n1.
+    Use DuckDuckGoSearchTool to search: \"site:pubchem.ncbi.nlm.nih.gov {compound_name}\"\n2.
+    Search: \"site:ebi.ac.uk/chembl {compound_name}\"  \n3. Use Pharmaceutical Semantic
+    Search with data_source=\"molecular_data\"\nExtract: molecular targets, pathways,
+    structural analogs, approved indications."
+  expected_output: Molecular profile report with targets, pathways, properties, and
+    structural relationships for {compound_name}.
+  agent: molecular_database_search_agent
+  async_execution: true
+safety_profile_analysis:
+  description: |-
+    Analyze safety data for {compound_name}:
+    1. Search: "{compound_name} adverse events safety profile"
+    2. Search: "{compound_name} pharmacovigilance FDA warnings"
+    3. Use Pharmaceutical Semantic Search with data_source="safety_data"
+    Focus on: contraindications, drug interactions, population-specific risks.
+  expected_output: Comprehensive safety assessment with risk analysis and population
+    considerations for {compound_name}.
+  agent: safety_profile_analyzer
+  async_execution: true
+competitive_intelligence_research:
+  description: |-
+    Research competitor landscape for {compound_name}:
+    1. Search: "{compound_name} competitors pipeline development"
+    2. Search: "{compound_name} biosimilars generic competition"
+    3. Use Pharmaceutical Semantic Search with data_source="competitive_data"
+    Identify: competitor strategies, market gaps, differentiation opportunities.
+  expected_output: Competitive landscape analysis with strategic opportunities and
+    threats for {compound_name}.
+  agent: competitive_intelligence_agent
+  async_execution: true
+regulatory_pathway_assessment:
+  description: |-
+    Analyze regulatory requirements for {compound_name} repurposing:
+    1. Search: "{compound_name} FDA approval pathway 505(b)(2)"
+    2. Search: "{compound_name} regulatory precedents new indication"
+    3. Use Pharmaceutical Semantic Search with data_source="regulatory_data"
+    Focus on: approval timelines, required studies, regulatory strategies.
+  expected_output: Regulatory strategy assessment with approval pathways and requirements
+    for {compound_name} repurposing.
+  agent: regulatory_pathway_analyst
+  async_execution: true
+disease_area_opportunity_mapping:
+  description: |-
+    Identify disease areas suitable for {compound_name} repurposing:
+    1. Search: "{compound_name} mechanism of action therapeutic targets"
+    2. Search: "diseases similar mechanism {compound_name}"
+    3. Use Pharmaceutical Semantic Search with data_source="disease_data"
+    Map: mechanism alignment, unmet needs, target patient populations.
+  expected_output: Disease area assessment with repurposing opportunities and mechanism
+    alignment for {compound_name}.
+  agent: disease_area_expert
+  async_execution: true
+independent_strategy_synthesis:
+  description: |-
+    Create comprehensive drug repurposing strategy for {compound_name} by synthesizing the provided context from all specialists.
+    
+    **DO NOT USE TOOLS OR SEARCH. RELY SOLELY ON THE PROVIDED CONTEXT.**
+
+    **SYNTHESIS APPROACH:**
+    1.  Review and integrate findings from scientific literature, molecular data, safety analysis, competitive intelligence, regulatory assessment, and disease area mapping.
+    2.  Cross-reference these findings to identify the strongest repurposing opportunities.
+
+    **SYNTHESIS FRAMEWORK:**
+    - Identify top 3-5 repurposing opportunities based on mechanism alignment
+    - Assess market potential and competitive positioning
+    - Evaluate regulatory feasibility and development timeline
+    - Prioritize opportunities with highest success probability
+  expected_output: "A comprehensive drug repurposing strategy document in markdown
+    format including:\n- Executive summary with top 3-5 repurposing recommendations\n-
+    Detailed analysis of each opportunity with scientific rationale, market potential,
+    and feasibility assessment\n- Risk analysis and mitigation strategies\n- Implementation
+    roadmap with timelines, milestones, and resource requirements\n- Investment requirements
+    and expected ROI projections\n- Regulatory strategy and pathway recommendations
+    \ \n- Next steps and decision framework for moving forward\n- Supporting appendices
+    with detailed findings from each research stream\n- **Structured Data Section**: A JSON or Markdown table containing key metrics (e.g., Success Probability, Market Size, Development Time in years) suitable for creating visualizations."
+  agent: drug_repurposing_master_coordinator
+  context:
+  - scientific_literature_analysis
+  - molecular_database_research
+  - safety_profile_analysis
+  - competitive_intelligence_research
+  - regulatory_pathway_assessment
+  - disease_area_opportunity_mapping

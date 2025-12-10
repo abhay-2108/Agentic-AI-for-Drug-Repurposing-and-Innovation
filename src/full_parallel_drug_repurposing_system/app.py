@@ -7,6 +7,8 @@ import uuid
 from threading import Thread
 import time
 from full_parallel_drug_repurposing_system.crew import FullParallelDrugRepurposingSystemCrew
+from full_parallel_drug_repurposing_system.models import AgentResponse, MasterResponse
+from crewai import LLM
 
 # --- Page Config ---
 st.set_page_config(
@@ -62,10 +64,17 @@ if "sessions" not in st.session_state:
 if "current_session_id" not in st.session_state:
     new_id = str(uuid.uuid4())
     st.session_state.current_session_id = new_id
-    st.session_state.sessions[new_id] = {'messages': [], 'name': 'New Chat'}
+    st.session_state.current_session_id = new_id
+    st.session_state.sessions[new_id] = {'messages': [], 'name': 'New Chat', 'research_context': None}
 
 def get_current_messages():
     return st.session_state.sessions[st.session_state.current_session_id]['messages']
+
+def get_research_context():
+    return st.session_state.sessions[st.session_state.current_session_id].get('research_context')
+
+def set_research_context(context):
+    st.session_state.sessions[st.session_state.current_session_id]['research_context'] = context
 
 def add_message(role, content, visualization=None):
     st.session_state.sessions[st.session_state.current_session_id]['messages'].append({
@@ -80,7 +89,10 @@ with st.sidebar:
     if st.button("➕ New Chat", use_container_width=True):
         new_id = str(uuid.uuid4())
         st.session_state.current_session_id = new_id
-        st.session_state.sessions[new_id] = {'messages': [], 'name': 'New Chat'}
+        new_id = str(uuid.uuid4())
+        st.session_state.current_session_id = new_id
+        st.session_state.sessions[new_id] = {'messages': [], 'name': 'New Chat', 'research_context': None}
+        st.rerun()
         st.rerun()
     
     st.markdown("---")
@@ -162,23 +174,26 @@ if prompt := st.chat_input("Enter a drug name (e.g., Aspirin, Metformin)"):
             
             def task_callback(task_output):
                 # Put the task execution result into the queue
+                data = None
+                if hasattr(task_output, 'pydantic') and task_output.pydantic:
+                     try:
+                        data = task_output.pydantic.model_dump()
+                     except:
+                        pass
+                
                 msg_queue.put({
                     "type": "task",
                     "agent": task_output.agent,
-                    "summary": task_output.raw[:200] + "..." if len(task_output.raw) > 200 else task_output.raw
+                    "summary": task_output.raw[:200] + "..." if len(task_output.raw) > 200 else task_output.raw,
+                    "data": data
                 })
 
             def run_crew(crew_inputs, result_queue):
                 try:
                     # Create crew with callback
-                    # Note: We need to patch the tasks to add the callback since they are created by decorator
                     crew_instance = FullParallelDrugRepurposingSystemCrew().crew()
                     
-                    # Monkey-patch callbacks into tasks? 
-                    # Easier: The Crew object allows 'task_callback' or 'step_callback' in newer versions?
-                    # Documentation says Crew(..., task_callback=...)
-                    # FullParallelDrugRepurposingSystemCrew returns a Crew object in .crew() method.
-                    # We can iterate over crew_instance.tasks and assign the callback
+                    # Assign callbacks to tasks
                     for task in crew_instance.tasks:
                         task.callback = task_callback
                         
@@ -202,11 +217,31 @@ if prompt := st.chat_input("Enter a drug name (e.g., Aspirin, Metformin)"):
                     # Non-blocking get
                     msg = msg_queue.get_nowait()
                     if msg["type"] == "task":
-                        log_entry = f"✅ **{msg['agent']}**: {msg['summary']}"
-                        logs.append(log_entry)
-                        # Construct log string
-                        log_str = "\n\n".join(logs)
-                        output_placeholder.markdown(log_str)
+                        agent_name = msg['agent']
+                        summary = msg['summary']
+                        data = msg.get('data')
+                        
+                        if data:
+                            # Render structured agent output in the status container
+                            with status_container:
+                                with st.expander(f"✅ {agent_name} Finished", expanded=False):
+                                    if 'summary' in data:
+                                        st.markdown(f"**Summary:** {data['summary']}")
+                                    if 'key_findings' in data:
+                                        st.markdown("**Key Findings:**")
+                                        for insight in data['key_findings']:
+                                            st.markdown(f"- {insight['summary']} (Confidence: {insight.get('confidence', 0.0)})")
+                                    if 'next_steps' in data and data['next_steps']:
+                                        st.markdown("**Next Steps:**")
+                                        for step in data['next_steps']:
+                                            st.markdown(f"- {step}")
+                        else:
+                            # Fallback to raw log
+                            log_entry = f"✅ **{agent_name}**: {summary}"
+                            logs.append(log_entry)
+                            log_str = "\n\n".join(logs)
+                            output_placeholder.markdown(log_str)
+                            
                 except queue.Empty:
                     time.sleep(0.1)
                 
@@ -221,20 +256,79 @@ if prompt := st.chat_input("Enter a drug name (e.g., Aspirin, Metformin)"):
                     st.error(res["error"])
                 elif res["type"] == "result":
                     status_container.update(label="✅ Research Complete!", state="complete", expanded=False)
-                    final_result = res["data"].raw
+                    # Extract pydantic object from final result
+                    if hasattr(res["data"], 'pydantic') and res["data"].pydantic:
+                        final_result = res["data"].pydantic
+                    else:
+                        final_result = res["data"].raw
             
             # Render Final Output
             if final_result:
                 st.markdown("### 📋 Final Strategic Report")
-                st.markdown(final_result)
                 
-                # Visualization
-                viz_data = extract_json_section(final_result)
+                final_content_str = ""
+                
+                if isinstance(final_result, MasterResponse):
+                    # Structured Final Display
+                    st.markdown(f"#### Executive Summary: {final_result.drug_name}")
+                    st.info(final_result.executive_summary)
+                    
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.metric("Overall Confidence", f"{final_result.overall_confidence * 100:.1f}%")
+                    with col2:
+                        st.metric("Success Probability", f"{final_result.success_probability * 100:.1f}%")
+                    
+                    st.markdown("#### Key Insights")
+                    for insight in final_result.key_insights:
+                        st.markdown(f"- **{insight.summary}**: {insight.details} (*Source: {insight.source}*)")
+                        
+                    st.markdown("#### Strategic Recommendations")
+                    for rec in final_result.recommendations:
+                        priority_color = "red" if rec.priority.lower() == "high" else "orange" if rec.priority.lower() == "medium" else "green"
+                        st.markdown(f"- :{priority_color}[**{rec.priority}**] **{rec.action}**: {rec.rationale}")
+                        
+                    final_content_str = final_result.model_dump_json(indent=2)
+                else:
+                    # Fallback to raw text
+                    st.markdown(final_result)
+                    final_content_str = str(final_result)
+                
+                # Visualization (Generic if possible, or skip if fully structured)
+                # If we want to keep the old viz logic, we can try to extract data from the structured object
                 final_vis = None
-                if viz_data:
-                    figs = create_visualizations(viz_data)
-                    for fig in figs:
-                        st.plotly_chart(fig)
-                        final_vis = fig
                 
-                add_message("assistant", final_result, visualization=final_vis)
+                add_message("assistant", final_content_str, visualization=final_vis)
+                set_research_context(final_content_str)
+
+# --- Post-Research Chat ---
+context = get_research_context()
+if context:
+    st.markdown("---")
+    st.header("💬 Chat with Research Findings")
+    st.caption("Ask questions about the generated report.")
+    
+    # Initialize chat history for Q&A if not exists (we can reuse main history or separate)
+    # Using main history for continuity
+    
+    if q_prompt := st.chat_input("Ask a follow-up question...", key="qa_input"):
+        st.chat_message("user").markdown(q_prompt)
+        add_message("user", q_prompt)
+        
+        with st.chat_message("assistant"):
+            with st.spinner("Thinking..."):
+                try:
+                    # Simple LLM call using CrewAI's LLM wrapper or LiteLLM
+                    llm = LLM(model="ollama/minimax-m2:cloud", base_url="http://localhost:11434")
+                    
+                    # Construct prompt with context
+                    messages = [
+                        {"role": "system", "content": "You are a helpful pharmaceutical research assistant. Answer the user's question based strictly on the provided research context below."},
+                        {"role": "user", "content": f"Context:\n{context}\n\nQuestion: {q_prompt}"}
+                    ]
+                    
+                    response = llm.call(messages)
+                    st.markdown(response)
+                    add_message("assistant", response)
+                except Exception as e:
+                    st.error(f"Error executing chat: {str(e)}")

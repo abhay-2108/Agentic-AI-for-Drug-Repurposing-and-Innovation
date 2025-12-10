@@ -7,11 +7,11 @@ from crewai_tools import (
 	ArxivPaperTool,
 	ScrapeWebsiteTool
 )
-from full_parallel_drug_repurposing_system.tools.pharmaceutical_semantic_search import PharmaceuticalSemanticSearchTool
+
 from full_parallel_drug_repurposing_system.tools.duckduckgo_search_tool import DuckDuckGoSearchTool
 
 
-
+from full_parallel_drug_repurposing_system.models import AgentResponse, MasterResponse
 
 @CrewBase
 class FullParallelDrugRepurposingSystemCrew:
@@ -49,7 +49,6 @@ class FullParallelDrugRepurposingSystemCrew:
             
             
             tools=[				ArxivPaperTool(),
-				PharmaceuticalSemanticSearchTool(),
 				ScrapeWebsiteTool()],
             reasoning=False,
             max_reasoning_attempts=None,
@@ -73,8 +72,7 @@ class FullParallelDrugRepurposingSystemCrew:
             config=self.agents_config["molecular_database_search_agent"],
             
             
-            tools=[				PharmaceuticalSemanticSearchTool(),
-				DuckDuckGoSearchTool()],
+            tools=[DuckDuckGoSearchTool()],
             reasoning=False,
             max_reasoning_attempts=None,
             inject_date=True,
@@ -97,8 +95,7 @@ class FullParallelDrugRepurposingSystemCrew:
             config=self.agents_config["safety_profile_analyzer"],
             
             
-            tools=[				PharmaceuticalSemanticSearchTool(),
-				DuckDuckGoSearchTool()],
+            tools=[				DuckDuckGoSearchTool()],
             reasoning=False,
             max_reasoning_attempts=None,
             inject_date=True,
@@ -121,8 +118,7 @@ class FullParallelDrugRepurposingSystemCrew:
             config=self.agents_config["competitive_intelligence_agent"],
             
             
-            tools=[				PharmaceuticalSemanticSearchTool(),
-				DuckDuckGoSearchTool()],
+            tools=[				DuckDuckGoSearchTool()],
             reasoning=False,
             max_reasoning_attempts=None,
             inject_date=True,
@@ -145,8 +141,7 @@ class FullParallelDrugRepurposingSystemCrew:
             config=self.agents_config["regulatory_pathway_analyst"],
             
             
-            tools=[				PharmaceuticalSemanticSearchTool(),
-				DuckDuckGoSearchTool()],
+            tools=[				DuckDuckGoSearchTool()],
             reasoning=False,
             max_reasoning_attempts=None,
             inject_date=True,
@@ -169,8 +164,7 @@ class FullParallelDrugRepurposingSystemCrew:
             config=self.agents_config["disease_area_expert"],
             
             
-            tools=[				PharmaceuticalSemanticSearchTool(),
-				DuckDuckGoSearchTool()],
+            tools=[				DuckDuckGoSearchTool()],
             reasoning=False,
             max_reasoning_attempts=None,
             inject_date=True,
@@ -193,6 +187,7 @@ class FullParallelDrugRepurposingSystemCrew:
         return Task(
             config=self.tasks_config["scientific_literature_analysis"],
             markdown=False,
+            output_pydantic=AgentResponse
             
             
         )
@@ -202,6 +197,7 @@ class FullParallelDrugRepurposingSystemCrew:
         return Task(
             config=self.tasks_config["molecular_database_research"],
             markdown=False,
+            output_pydantic=AgentResponse
             
             
         )
@@ -211,6 +207,7 @@ class FullParallelDrugRepurposingSystemCrew:
         return Task(
             config=self.tasks_config["safety_profile_analysis"],
             markdown=False,
+            output_pydantic=AgentResponse
             
             
         )
@@ -220,6 +217,7 @@ class FullParallelDrugRepurposingSystemCrew:
         return Task(
             config=self.tasks_config["competitive_intelligence_research"],
             markdown=False,
+            output_pydantic=AgentResponse
             
             
         )
@@ -229,6 +227,7 @@ class FullParallelDrugRepurposingSystemCrew:
         return Task(
             config=self.tasks_config["regulatory_pathway_assessment"],
             markdown=False,
+            output_pydantic=AgentResponse
             
             
         )
@@ -238,6 +237,7 @@ class FullParallelDrugRepurposingSystemCrew:
         return Task(
             config=self.tasks_config["disease_area_opportunity_mapping"],
             markdown=False,
+            output_pydantic=AgentResponse
             
             
         )
@@ -247,6 +247,7 @@ class FullParallelDrugRepurposingSystemCrew:
         return Task(
             config=self.tasks_config["independent_strategy_synthesis"],
             markdown=False,
+            output_pydantic=MasterResponse
             
             
         )

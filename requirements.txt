@@ -1,0 +1,5 @@
+crewai[litellm,tools]==1.4.1
+pydantic
+ddgs
+streamlit
+plotly

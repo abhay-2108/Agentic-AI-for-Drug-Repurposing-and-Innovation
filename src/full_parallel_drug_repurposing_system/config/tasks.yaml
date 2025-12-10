@@ -17,61 +17,60 @@ scientific_literature_analysis:
     new indications based on mechanism and literature\n- Key supporting studies and
     evidence quality assessment\n- Research gaps and opportunities identified"
   agent: scientific_literature_research_specialist
-  async_execution: true
+
 molecular_database_research:
   description: "Search molecular databases for comprehensive {compound_name} data:\n1.
     Use DuckDuckGoSearchTool to search: \"site:pubchem.ncbi.nlm.nih.gov {compound_name}\"\n2.
-    Search: \"site:ebi.ac.uk/chembl {compound_name}\"  \n3. Use Pharmaceutical Semantic
-    Search with data_source=\"molecular_data\"\nExtract: molecular targets, pathways,
-    structural analogs, approved indications."
+    Search: \"site:ebi.ac.uk/chembl {compound_name}\"  \nExtract: molecular targets,
+    pathways, structural analogs, approved indications."
   expected_output: Molecular profile report with targets, pathways, properties, and
     structural relationships for {compound_name}.
   agent: molecular_database_search_agent
-  async_execution: true
+
 safety_profile_analysis:
   description: |-
     Analyze safety data for {compound_name}:
     1. Search: "{compound_name} adverse events safety profile"
     2. Search: "{compound_name} pharmacovigilance FDA warnings"
-    3. Use Pharmaceutical Semantic Search with data_source="safety_data"
+
     Focus on: contraindications, drug interactions, population-specific risks.
   expected_output: Comprehensive safety assessment with risk analysis and population
     considerations for {compound_name}.
   agent: safety_profile_analyzer
-  async_execution: true
+
 competitive_intelligence_research:
   description: |-
     Research competitor landscape for {compound_name}:
     1. Search: "{compound_name} competitors pipeline development"
     2. Search: "{compound_name} biosimilars generic competition"
-    3. Use Pharmaceutical Semantic Search with data_source="competitive_data"
+
     Identify: competitor strategies, market gaps, differentiation opportunities.
   expected_output: Competitive landscape analysis with strategic opportunities and
     threats for {compound_name}.
   agent: competitive_intelligence_agent
-  async_execution: true
+
 regulatory_pathway_assessment:
   description: |-
     Analyze regulatory requirements for {compound_name} repurposing:
     1. Search: "{compound_name} FDA approval pathway 505(b)(2)"
     2. Search: "{compound_name} regulatory precedents new indication"
-    3. Use Pharmaceutical Semantic Search with data_source="regulatory_data"
+
     Focus on: approval timelines, required studies, regulatory strategies.
   expected_output: Regulatory strategy assessment with approval pathways and requirements
     for {compound_name} repurposing.
   agent: regulatory_pathway_analyst
-  async_execution: true
+
 disease_area_opportunity_mapping:
   description: |-
     Identify disease areas suitable for {compound_name} repurposing:
     1. Search: "{compound_name} mechanism of action therapeutic targets"
     2. Search: "diseases similar mechanism {compound_name}"
-    3. Use Pharmaceutical Semantic Search with data_source="disease_data"
+
     Map: mechanism alignment, unmet needs, target patient populations.
   expected_output: Disease area assessment with repurposing opportunities and mechanism
     alignment for {compound_name}.
   agent: disease_area_expert
-  async_execution: true
+
 independent_strategy_synthesis:
   description: |-
     Create comprehensive drug repurposing strategy for {compound_name} by synthesizing the provided context from all specialists.

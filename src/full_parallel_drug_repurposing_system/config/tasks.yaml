@@ -10,8 +10,8 @@ scientific_literature_analysis:
     from actual search results\n- Include direct URLs to papers when available\n-
     Note any searches that return limited results\n- Focus on recent publications
     (last 5-10 years)\n\n**Never fabricate citations** - only report what you actually
-    find through tool searches."
-  expected_output: "A detailed scientific literature report in markdown format covering:\n-
+    find through tool searches. IMPORTANT: Be concise. Limit to top 5 key findings."
+  expected_output: "A concise scientific literature report in markdown format covering:\n-
     Compound overview and approved indications\n- Comprehensive mechanism of action
     analysis\n- Safety and pharmacokinetic profile summary  \n- List of potential
     new indications based on mechanism and literature\n- Key supporting studies and
@@ -22,8 +22,8 @@ molecular_database_research:
   description: "Search molecular databases for comprehensive {compound_name} data:\n1.
     Use DuckDuckGoSearchTool to search: \"site:pubchem.ncbi.nlm.nih.gov {compound_name}\"\n2.
     Search: \"site:ebi.ac.uk/chembl {compound_name}\"  \nExtract: molecular targets,
-    pathways, structural analogs, approved indications."
-  expected_output: Molecular profile report with targets, pathways, properties, and
+    pathways, structural analogs, approved indications. IMPORTANT: Be concise. Limit to top 5 key findings to ensure valid JSON output."
+  expected_output: Concise molecular profile report with targets, pathways, properties, and
     structural relationships for {compound_name}.
   agent: molecular_database_search_agent
 

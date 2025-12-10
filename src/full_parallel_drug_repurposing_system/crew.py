@@ -13,6 +13,11 @@ from full_parallel_drug_repurposing_system.tools.duckduckgo_search_tool import D
 
 from full_parallel_drug_repurposing_system.models import AgentResponse, MasterResponse
 
+llm = LLM(
+    model="ollama/qwen3:8b",
+    base_url="http://localhost:11434"
+)
+
 @CrewBase
 class FullParallelDrugRepurposingSystemCrew:
     """FullParallelDrugRepurposingSystem crew"""
@@ -34,10 +39,7 @@ class FullParallelDrugRepurposingSystemCrew:
             max_rpm=None,
             
             max_execution_time=None,
-            llm=LLM(
-                model="ollama/minimax-m2:cloud",
-                base_url="http://localhost:11434"
-            ),
+            llm=llm,
             
         )
     
@@ -58,10 +60,7 @@ class FullParallelDrugRepurposingSystemCrew:
             max_rpm=None,
             
             max_execution_time=None,
-            llm=LLM(
-                model="ollama/minimax-m2:cloud",
-                base_url="http://localhost:11434"
-            ),
+            llm=llm,
             
         )
     
@@ -81,10 +80,7 @@ class FullParallelDrugRepurposingSystemCrew:
             max_rpm=None,
             
             max_execution_time=None,
-            llm=LLM(
-                model="ollama/minimax-m2:cloud",
-                base_url="http://localhost:11434"
-            ),
+            llm=llm,
             
         )
     
@@ -104,10 +100,7 @@ class FullParallelDrugRepurposingSystemCrew:
             max_rpm=None,
             
             max_execution_time=None,
-            llm=LLM(
-                model="ollama/minimax-m2:cloud",
-                base_url="http://localhost:11434"
-            ),
+            llm=llm,
             
         )
     
@@ -127,10 +120,7 @@ class FullParallelDrugRepurposingSystemCrew:
             max_rpm=None,
             
             max_execution_time=None,
-            llm=LLM(
-                model="ollama/minimax-m2:cloud",
-                base_url="http://localhost:11434"
-            ),
+            llm=llm,
             
         )
     
@@ -150,10 +140,7 @@ class FullParallelDrugRepurposingSystemCrew:
             max_rpm=None,
             
             max_execution_time=None,
-            llm=LLM(
-                model="ollama/minimax-m2:cloud",
-                base_url="http://localhost:11434"
-            ),
+            llm=llm,
             
         )
     
@@ -173,10 +160,7 @@ class FullParallelDrugRepurposingSystemCrew:
             max_rpm=None,
             
             max_execution_time=None,
-            llm=LLM(
-                model="ollama/minimax-m2:cloud",
-                base_url="http://localhost:11434"
-            ),
+            llm=llm,
             
         )
     

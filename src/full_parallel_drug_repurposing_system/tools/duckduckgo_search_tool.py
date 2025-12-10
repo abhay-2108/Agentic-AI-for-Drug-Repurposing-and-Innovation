@@ -1,7 +1,7 @@
 from crewai.tools import BaseTool
 from pydantic import BaseModel, Field
 from typing import Type, List, Dict, Any
-from ddgs import DDGS
+from duckduckgo_search import DDGS
 import json
 
 class DuckDuckGoSearchInput(BaseModel):

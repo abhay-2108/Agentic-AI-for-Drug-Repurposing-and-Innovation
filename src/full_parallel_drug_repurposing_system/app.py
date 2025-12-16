@@ -12,7 +12,13 @@ import google.generativeai as genai
 from dotenv import load_dotenv
 
 # Add the parent directory to sys.path to resolve absolute imports
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import os
+import sys
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.abspath(os.path.join(current_dir, '..'))
+if parent_dir not in sys.path:
+    sys.path.insert(0, parent_dir)
+
 
 from full_parallel_drug_repurposing_system.crew import FullParallelDrugRepurposingSystemCrew
 from full_parallel_drug_repurposing_system.models import AgentResponse, MasterResponse
@@ -132,7 +138,7 @@ with st.sidebar:
 
 # --- Main Layout ---
 st.title("🧬 AI Drug Repurposing Agent")
-st.markdown("### Discover new therapeutic uses for existing drugs via parallel agentic research.")
+st.markdown("### Discover new therapeutic uses for existing drugs via agentic research.")
 
 # Split Layout: Process (Middle) vs Chat (Right)
 col_process, col_chat = st.columns([0.65, 0.35], gap="large")
